@@ -163,43 +163,49 @@ describe('Attribute query', function () {
 
     it('single backslash-escaped slash in a literal', function () {
         const matches = esquery(literalSlash, '[value="foo\\/bar"]');
-        assert.includeMembers(matches, [
+        assert.sameMembers(matches, [
+            literalSlash.body[0].declarations[0].init,
             literalSlash.body[2].declarations[0].init
         ]);
     });
 
-    it('single backslash-escaped slash in a regexp', function () {
+    it('single backslash-escaped slash in a literal', function () {
         const matches = esquery(literalSlash, '[value=/foo\\/bar/]');
-        assert.includeMembers(matches, [
-            literalSlash.body[0].declarations[0].init
+        assert.sameMembers(matches, [
+            literalSlash.body[0].declarations[0].init,
+            literalSlash.body[2].declarations[0].init
         ]);
     });
 
     it('single encoded slash in a regexp', function () {
         const matches = esquery(literalSlash, '[value=/foo\\x2Fbar/]');
-        assert.includeMembers(matches, [
-            literalSlash.body[0].declarations[0].init
+        assert.sameMembers(matches, [
+            literalSlash.body[0].declarations[0].init,
+            literalSlash.body[2].declarations[0].init
         ]);
     });
 
     it('double backslash-escaped slash in a literal', function () {
         const matches = esquery(literalSlash, '[value="foo\\/\\/bar"]');
-        assert.includeMembers(matches, [
+        assert.sameMembers(matches, [
+            literalSlash.body[1].declarations[0].init,
             literalSlash.body[3].declarations[0].init
         ]);
     });
 
     it('double backslash-escaped slash in a regexp', function () {
         const matches = esquery(literalSlash, '[value=/foo\\/\\/bar/]');
-        assert.includeMembers(matches, [
-            literalSlash.body[1].declarations[0].init
+        assert.sameMembers(matches, [
+            literalSlash.body[1].declarations[0].init,
+            literalSlash.body[3].declarations[0].init
         ]);
     });
 
     it('double backslash-escaped slash in a regexp', function () {
         const matches = esquery(literalSlash, '[value=/foo\\x2F\\x2Fbar/]');
-        assert.includeMembers(matches, [
-            literalSlash.body[1].declarations[0].init
+        assert.sameMembers(matches, [
+            literalSlash.body[1].declarations[0].init,
+            literalSlash.body[3].declarations[0].init
         ]);
     });
 

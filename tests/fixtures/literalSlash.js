@@ -10,4 +10,3 @@ const parsed = esprima.parse(`
 
 export default parsed;
 
-

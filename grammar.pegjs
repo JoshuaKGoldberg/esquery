@@ -14,12 +14,6 @@
       }
     });
   }
-
-  // https://github.com/estools/esquery/issues/68
-  // Inside all /regexp/ literals, we replace escaped-backslashes with the \x2F equivalent.
-  input = input.replaceAll(/\/((?:[^\/\\]|\\.)*?)\//g, (match) => {
-    return match.replaceAll("\\/", "\\\\x2F");
-  });
 }
 
 start
@@ -103,13 +97,18 @@ attr
     path = i:identifierName { return { type: 'literal', value: i }; }
     type = "type(" _ t:[^ )]+ _ ")" { return { type: 'type', value: t.join('') }; }
     flags = [imsu]+
-    regex = "/" d:[^/]+ "/" flgs:flags? {
-      // https://github.com/estools/esquery/issues/68
-      const text = d.join('').replaceAll("\\\\x2F", "\\/");
+    regex = "/" pattern:(regex_cc / regex_hex_escape / regex_single_char_escape / regex_chars)+ "/" flgs:flags? {
       return {
-        type: 'regexp', value: new RegExp(text, flgs ? flgs.join('') : '')
+        type: 'regexp', value: new RegExp(pattern.join(''), flgs ? flgs.join('') : '')
       };
     }
+      regex_cc = "[" cs:([^\]\\] / regex_hex_escape / regex_single_char_escape)+ "]" { return '[' + cs.join('') + ']'; }
+      regex_hex_escape = "\\x" a:[A-Fa-f0-9] b:[A-Fa-f0-9] { return '\\x' + a + b; }
+      regex_single_char_escape = "\\" a:. {
+        let hex = a.charCodeAt(0).toString(16);
+        return '\\x' + (hex.length > 1 ? hex : '0' + hex) ;
+      }
+      regex_chars = cs:[^/\\\[]+ { return cs.join(''); }
 
 field = "." i:identifierName is:("." identifierName)* {
   return { type: 'field', name: is.reduce(function(memo, p){ return memo + p[0] + p[1]; }, i)};
