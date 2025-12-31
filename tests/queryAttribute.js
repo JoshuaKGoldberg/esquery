@@ -177,8 +177,24 @@ describe('Attribute query', function () {
         ]);
     });
 
-    it('single encoded slash in a regexp', function () {
+    it('single slash in a regexp character class', function () {
+        const matches = esquery(literalSlash, '[value=/foo[/]bar/]');
+        assert.sameMembers(matches, [
+            literalSlash.body[0].declarations[0].init,
+            literalSlash.body[2].declarations[0].init
+        ]);
+    });
+
+    it('single encoded slash in a regexp (\\x2F)', function () {
         const matches = esquery(literalSlash, '[value=/foo\\x2Fbar/]');
+        assert.sameMembers(matches, [
+            literalSlash.body[0].declarations[0].init,
+            literalSlash.body[2].declarations[0].init
+        ]);
+    });
+
+    it('single encoded slash in a regexp (\\u002F)', function () {
+        const matches = esquery(literalSlash, '[value=/foo\\u002Fbar/]');
         assert.sameMembers(matches, [
             literalSlash.body[0].declarations[0].init,
             literalSlash.body[2].declarations[0].init
@@ -201,8 +217,24 @@ describe('Attribute query', function () {
         ]);
     });
 
-    it('double backslash-escaped slash in a regexp', function () {
+    it('double slash in a regexp character class', function () {
+        const matches = esquery(literalSlash, '[value=/foo[/][/]bar/]');
+        assert.sameMembers(matches, [
+            literalSlash.body[1].declarations[0].init,
+            literalSlash.body[3].declarations[0].init
+        ]);
+    });
+
+    it('double backslash-escaped slash in a regexp (\\x2F)', function () {
         const matches = esquery(literalSlash, '[value=/foo\\x2F\\x2Fbar/]');
+        assert.sameMembers(matches, [
+            literalSlash.body[1].declarations[0].init,
+            literalSlash.body[3].declarations[0].init
+        ]);
+    });
+
+    it('double backslash-escaped slash in a regexp (\\u002F)', function () {
+        const matches = esquery(literalSlash, '[value=/foo\\u002F\\u002Fbar/]');
         assert.sameMembers(matches, [
             literalSlash.body[1].declarations[0].init,
             literalSlash.body[3].declarations[0].init
